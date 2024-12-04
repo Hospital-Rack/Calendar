@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "rootDir": "./src",
+
+    // Caution here: https://github.com/Microsoft/TypeScript/issues/29172
+    "outDir": "./dist",
+
+    "types": ["node", "jest"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "allowJs": false,
+    "incremental": false,
+    "removeComments": false,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "pretty": true,
+    "newLine": "lf",
+    "stripInternal": true,
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "sourceMap": true,
+    "inlineSources": true,
+
+    // Set `sourceRoot` to  "/" to strip the build path prefix
+    // from generated source code references.
+    // This improves issue grouping in Sentry.
+    "sourceRoot": "/"
+  },
+  "ts-node": {
+    "esm": true
+  },
+  "include": ["./src/**/*.ts", "./src/**/*.mts"],
+  "exclude": ["node_modules"]
+}
