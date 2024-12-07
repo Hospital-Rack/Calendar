@@ -1,14 +1,8 @@
-import {
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryColumn,
-    Relation,
-} from "typeorm";
-import {Event} from "./event.entity";
-import {EventParticipant} from "./event-participant.entity";
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn, Relation } from "typeorm";
+import { Event } from "./event.entity.js";
+import { EventParticipant } from "./event-participant.entity.js";
 
-@Entity({schema: "calendar", name: "event-participants-has-event"})
+@Entity({ schema: "calendar", name: "event-participants-has-event" })
 export class EventParticipantsHasEvent {
     @PrimaryColumn()
     participantId?: string;
@@ -22,7 +16,7 @@ export class EventParticipantsHasEvent {
     @JoinColumn()
     event!: Relation<Event>;
 
-    @ManyToOne(() => EventParticipant, p => p.events, {onDelete: "CASCADE"})
+    @ManyToOne(() => EventParticipant, p => p.events, { onDelete: "CASCADE" })
     @JoinColumn()
     participant!: Relation<EventParticipant>;
 }

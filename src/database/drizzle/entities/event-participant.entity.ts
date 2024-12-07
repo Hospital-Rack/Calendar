@@ -1,16 +1,16 @@
-import {boolean, uuid, varchar} from "drizzle-orm/pg-core";
-import {relations} from "drizzle-orm";
-import {eventParticipantsHasEvent} from "./event-participants-has-event.entity";
-import schema from "./calendarSchema";
+import { boolean, uuid, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { EventParticipantsHasEvent } from "./event-participants-has-event.entity.js";
+import Schema from "./calendarSchema.js";
 
 // Event participant table
-export const eventParticipant = schema.table('event-participant', {
-    id: uuid('id').primaryKey().defaultRandom(),
-    email: varchar('email'),
-    isOrganizer: boolean('is_organizer').default(false),
+export const EventParticipant = Schema.table("event-participant", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: varchar("email"),
+    isOrganizer: boolean("is_organizer").default(false),
 });
 
 // Event participant relations
-export const eventParticipantRelations = relations(eventParticipant, ({ many }) => ({
-    events: many(eventParticipantsHasEvent),
+export const EventParticipantRelations = relations(EventParticipant, ({ many }) => ({
+    events: many(EventParticipantsHasEvent),
 }));

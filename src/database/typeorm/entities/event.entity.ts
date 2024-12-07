@@ -1,26 +1,16 @@
-import {
-    Column,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    Relation,
-} from "typeorm";
-import { TRRule } from "../../../types/rrule.type";
-import { Calendar } from "./calendar.entity";
-import { EventParticipantsHasEvent } from "./event-participants-has-event.entity";
-import {TNotification} from "../../../types/TNotification.type";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from "typeorm";
+import { TRRule } from "../../../types/rrule.type.js";
+import { Calendar } from "./calendar.entity.js";
+import { EventParticipantsHasEvent } from "./event-participants-has-event.entity.js";
+import { TNotification } from "../../../types/TNotification.type.js";
 
-@Entity({ schema: "calendar", name:"event" })
+@Entity({ schema: "calendar", name: "event" })
 export class Event {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
-    @Column({
-        nullable: true,
-    })
-    calendarId?: string;
+    @Column()
+    calendarId!: string;
 
     @Column({ nullable: true })
     name?: string;
@@ -31,14 +21,10 @@ export class Event {
     })
     description?: string;
 
-    @Column({
-        nullable: true,
-    })
+    @Column({ nullable: true })
     location?: string;
 
-    @Column({
-        nullable: true,
-    })
+    @Column({ nullable: true })
     duration?: number;
 
     @Column({

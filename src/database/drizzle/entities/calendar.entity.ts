@@ -1,16 +1,16 @@
-import { text, uuid} from "drizzle-orm/pg-core";
-import {event} from "./event.entity";
-import {relations} from "drizzle-orm";
-import schema from "./calendarSchema";
+import { text, uuid } from "drizzle-orm/pg-core";
+import { Event } from "./event.entity.js";
+import { relations } from "drizzle-orm";
+import Schema from "./calendarSchema.js";
 
 // Calendar table
-export const calendar = schema.table('calendar', {
-    id: uuid('id').primaryKey().defaultRandom(),
-    name: text('name').notNull(),
-    color: text('color'),
+export const Calendar = Schema.table("calendar", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    color: text("color"),
 });
 
 // Calendar relations
-export const calendarRelations = relations(calendar, ({ many }) => ({
-    events: many(event),
+export const CalendarRelations = relations(Calendar, ({ many }) => ({
+    events: many(Event),
 }));

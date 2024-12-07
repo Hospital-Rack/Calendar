@@ -10,7 +10,7 @@
     // Caution here: https://github.com/Microsoft/TypeScript/issues/29172
     "outDir": "./dist",
 
-    "types": ["node", "jest"],
+    "types": ["node"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "strict": true,

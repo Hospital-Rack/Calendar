@@ -1,11 +1,5 @@
-import {
-    Column,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    Relation,
-} from "typeorm";
-import { EventParticipantsHasEvent } from "./event-participants-has-event.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from "typeorm";
+import { EventParticipantsHasEvent } from "./event-participants-has-event.entity.js";
 
 @Entity({ schema: "calendar", name: "event-participant" })
 export class EventParticipant {
