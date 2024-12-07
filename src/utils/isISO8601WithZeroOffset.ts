@@ -7,19 +7,14 @@ export function isISO8601WithZeroOffset(date: string): boolean {
     const [year, month, day] = datePart.split("-").map(Number);
     const [hour, minute, second] = timePart.slice(0, -1).split(":").map(Number);
 
-    // Check for valid days in month
     const daysInMonth = (month: number) => {
         return [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
     };
 
-    // Check if the year is a leap year
     const isLeapYear = (year: number) => {
         return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
     };
 
-    // Validate day based on month
     if (day < 1 || day > daysInMonth(month)) return false;
-
-    // Validate hour, minute, and second
     return !(hour < 0 || hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 59);
 }

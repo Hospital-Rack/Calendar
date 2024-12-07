@@ -1,50 +1,65 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from "typeorm";
 import { TRRule } from "../../../types/rrule.type.js";
-import { Calendar } from "./calendar.entity.js";
-import { EventParticipantsHasEvent } from "./event-participants-has-event.entity.js";
 import { TNotification } from "../../../types/TNotification.type.js";
+import { getCalendarEntity } from "./calendar.entity.js";
+import { getParticipantHasEventEntity } from "./event-participants-has-event.entity.js";
 
-@Entity({ schema: "calendar", name: "event" })
-export class Event {
-    @PrimaryGeneratedColumn("uuid")
-    id!: string;
-
-    @Column()
-    calendarId!: string;
-
-    @Column({ nullable: true })
+export type EventEntityOptions = {
     name?: string;
+    schema?: string;
 
-    @Column({
-        nullable: true,
-        type: "text",
-    })
-    description?: string;
+    tCalendar: () => ReturnType<typeof getCalendarEntity>;
+    tParticipantsHasEvent: () => ReturnType<typeof getParticipantHasEventEntity>;
+};
 
-    @Column({ nullable: true })
-    location?: string;
+export function getEventEntity(options: EventEntityOptions) {
+    options.name ??= "event";
+    options.schema ??= "calendar";
 
-    @Column({ nullable: true })
-    duration?: number;
+    @Entity({ schema: options.schema, name: options.name })
+    class Event {
+        @PrimaryGeneratedColumn("uuid")
+        id!: string;
 
-    @Column({
-        type: "jsonb",
-        nullable: true,
-        default: {},
-    })
-    rrule!: Partial<TRRule>;
+        @Column()
+        calendarId!: string;
 
-    @Column({
-        type: "jsonb",
-        nullable: true,
-        default: [],
-    })
-    notifications!: Partial<TNotification[]>;
+        @Column({ nullable: true })
+        name?: string;
 
-    @ManyToOne(() => Calendar, cal => cal.events, { onDelete: "CASCADE" })
-    @JoinColumn()
-    calendar!: Relation<Calendar>;
+        @Column({
+            nullable: true,
+            type: "text",
+        })
+        description?: string;
 
-    @OneToMany(() => EventParticipantsHasEvent, p => p.event)
-    participants!: Relation<EventParticipantsHasEvent[]>;
+        @Column({ nullable: true })
+        location?: string;
+
+        @Column({ nullable: true })
+        duration?: number;
+
+        @Column({
+            type: "jsonb",
+            nullable: true,
+            default: {},
+        })
+        rrule!: Partial<TRRule>;
+
+        @Column({
+            type: "jsonb",
+            nullable: true,
+            default: [],
+        })
+        notifications!: Partial<TNotification[]>;
+
+        @ManyToOne(() => options.tCalendar(), cal => cal.events, { onDelete: "CASCADE" })
+        @JoinColumn()
+        calendar!: Relation<InstanceType<ReturnType<typeof options.tCalendar>>>;
+
+        @OneToMany(() => options.tParticipantsHasEvent(), p => p.event)
+        participants!: Relation<InstanceType<ReturnType<typeof options.tParticipantsHasEvent>>[]>;
+    }
+
+    return Event;
 }

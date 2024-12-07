@@ -1,22 +1,37 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn, Relation } from "typeorm";
-import { Event } from "./event.entity.js";
-import { EventParticipant } from "./event-participant.entity.js";
+import { getEventEntity } from "./event.entity.js";
+import { getParticipantEntity } from "./participant.entity.js";
 
-@Entity({ schema: "calendar", name: "event-participants-has-event" })
-export class EventParticipantsHasEvent {
-    @PrimaryColumn()
-    participantId?: string;
+export type ParticipantHasEventEntityOptions = {
+    name?: string;
+    schema?: string;
 
-    @PrimaryColumn()
-    eventId?: string;
+    tEvent: () => ReturnType<typeof getEventEntity>;
+    tEventParticipant: () => ReturnType<typeof getParticipantEntity>;
+};
 
-    @ManyToOne(() => Event, event => event.participants, {
-        onDelete: "CASCADE",
-    })
-    @JoinColumn()
-    event!: Relation<Event>;
+export function getParticipantHasEventEntity(options: ParticipantHasEventEntityOptions) {
+    options.name ??= "participant-has-event";
+    options.schema ??= "calendar";
 
-    @ManyToOne(() => EventParticipant, p => p.events, { onDelete: "CASCADE" })
-    @JoinColumn()
-    participant!: Relation<EventParticipant>;
+    @Entity({ schema: options.schema, name: options.name })
+    class ParticipantsHasEvent {
+        @PrimaryColumn()
+        participantId!: string;
+
+        @PrimaryColumn()
+        eventId!: string;
+
+        @ManyToOne(() => options.tEvent(), event => event.participants, {
+            onDelete: "CASCADE",
+        })
+        @JoinColumn()
+        event!: Relation<InstanceType<ReturnType<typeof options.tEvent>>>;
+
+        @ManyToOne(() => options.tEventParticipant(), p => p.events, { onDelete: "CASCADE" })
+        @JoinColumn()
+        participant!: Relation<InstanceType<ReturnType<typeof options.tEventParticipant>>>;
+    }
+
+    return ParticipantsHasEvent;
 }
