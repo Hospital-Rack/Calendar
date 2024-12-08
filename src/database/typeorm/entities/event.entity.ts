@@ -9,12 +9,15 @@ export type EventEntityOptions = {
     schema?: string;
 
     tCalendar: () => ReturnType<typeof getCalendarEntity>;
-    tParticipantsHasEvent: () => ReturnType<typeof getParticipantHasEventEntity>;
+    tParticipantHasEvent: () => ReturnType<typeof getParticipantHasEventEntity>;
 };
 
 export function getEventEntity(options: EventEntityOptions) {
     options.name ??= "event";
     options.schema ??= "calendar";
+
+    const tCalendar = options.tCalendar();
+    const tParticipantHasEvent = options.tParticipantHasEvent();
 
     @Entity({ schema: options.schema, name: options.name })
     class Event {
@@ -53,12 +56,12 @@ export function getEventEntity(options: EventEntityOptions) {
         })
         notifications!: Partial<TNotification[]>;
 
-        @ManyToOne(() => options.tCalendar(), cal => cal.events, { onDelete: "CASCADE" })
+        @ManyToOne(() => tCalendar, cal => cal.events, { onDelete: "CASCADE" })
         @JoinColumn()
-        calendar!: Relation<InstanceType<ReturnType<typeof options.tCalendar>>>;
+        calendar!: Relation<InstanceType<typeof tCalendar>>;
 
-        @OneToMany(() => options.tParticipantsHasEvent(), p => p.event)
-        participants!: Relation<InstanceType<ReturnType<typeof options.tParticipantsHasEvent>>[]>;
+        @OneToMany(() => tParticipantHasEvent, p => p.event)
+        participants!: Relation<InstanceType<typeof tParticipantHasEvent>[]>;
     }
 
     return Event;

@@ -12,6 +12,8 @@ export function getCalendarEntity(options: CalendarEntityOptions) {
     options.name ??= "calendar";
     options.schema ??= "calendar";
 
+    const tEvent = options.tEvent();
+
     @Entity({ schema: options.schema, name: options.name })
     class Calendar {
         @PrimaryGeneratedColumn("uuid")
@@ -23,9 +25,10 @@ export function getCalendarEntity(options: CalendarEntityOptions) {
         @Column({ nullable: true })
         color?: string;
 
-        @OneToMany(() => options.tEvent(), event => event.calendar)
-        events!: Relation<InstanceType<ReturnType<typeof options.tEvent>>[]>;
+        @OneToMany(() => tEvent, event => event.calendar)
+        events!: Relation<InstanceType<typeof tEvent>[]>;
     }
+
 
     return Calendar;
 }

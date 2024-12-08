@@ -12,6 +12,8 @@ export function getParticipantEntity(options: ParticipantEntityOptions) {
     options.name ??= "participant";
     options.schema ??= "calendar";
 
+    const tParticipantHasEvent = options.tParticipantHasEvent();
+
     @Entity({ schema: options.schema, name: options.name })
     class Participant {
         @PrimaryGeneratedColumn("uuid")
@@ -25,8 +27,8 @@ export function getParticipantEntity(options: ParticipantEntityOptions) {
         })
         isOrganizer?: boolean;
 
-        @OneToMany(() => options.tParticipantHasEvent(), p => p.participant)
-        events!: Relation<InstanceType<ReturnType<typeof options.tParticipantHasEvent>>[]>;
+        @OneToMany(() => tParticipantHasEvent, p => p.participant)
+        events!: Relation<InstanceType<typeof tParticipantHasEvent>[]>;
     }
 
     return Participant;

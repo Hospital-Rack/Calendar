@@ -14,6 +14,9 @@ export function getParticipantHasEventEntity(options: ParticipantHasEventEntityO
     options.name ??= "participant-has-event";
     options.schema ??= "calendar";
 
+    const tEvent = options.tEvent();
+    const tEventParticipant = options.tEventParticipant();
+
     @Entity({ schema: options.schema, name: options.name })
     class ParticipantsHasEvent {
         @PrimaryColumn()
@@ -22,15 +25,15 @@ export function getParticipantHasEventEntity(options: ParticipantHasEventEntityO
         @PrimaryColumn()
         eventId!: string;
 
-        @ManyToOne(() => options.tEvent(), event => event.participants, {
+        @ManyToOne(() => tEvent, event => event.participants, {
             onDelete: "CASCADE",
         })
         @JoinColumn()
-        event!: Relation<InstanceType<ReturnType<typeof options.tEvent>>>;
+        event!: Relation<InstanceType<typeof tEvent>>;
 
-        @ManyToOne(() => options.tEventParticipant(), p => p.events, { onDelete: "CASCADE" })
+        @ManyToOne(() => tEventParticipant, p => p.events, { onDelete: "CASCADE" })
         @JoinColumn()
-        participant!: Relation<InstanceType<ReturnType<typeof options.tEventParticipant>>>;
+        participant!: Relation<InstanceType<typeof tEventParticipant>>;
     }
 
     return ParticipantsHasEvent;

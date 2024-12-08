@@ -1,17 +1,20 @@
-import { Calendar } from "../dist/index.js";
+import "reflect-metadata";
+import { Calendar } from "calendar";
 import { Column, DataSource, Entity } from "typeorm";
 
 const calendar = new Calendar();
 
-console.log(calendar.entities.calendar)
+// console.log(calendar.entities.calendar)
+//
+// @Entity({schema: 'calendar'})
+// class MyCalendar extends calendar.entities.calendar {
+//     @Column({type: 'text'})
+//     userId?: string;
+// }
+//
+// calendar.init({ entities: { calendar: MyCalendar } });
 
-@Entity({schema: 'calendar'})
-class MyCalendar extends calendar.entities.calendar {
-    @Column({type: 'text'})
-    userId?: string;
-}
-
-calendar.init({ entities: { calendar: MyCalendar } });
+console.log(calendar.entities.event);
 
 const AppDataSource = new DataSource({
     type: "postgres",
