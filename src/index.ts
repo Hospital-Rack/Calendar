@@ -1,26 +1,28 @@
 import "reflect-metadata";
-import {
-    AbstractCalendar, AbstractEvent, AbstractParticipant, AbstractParticipantsHasEvent,
-} from "./database/typeorm/index.js";
-import { Entity, JoinColumn, ManyToOne, OneToMany, Relation } from "typeorm";
+import { AbstractCalendar, AbstractEvent } from "./database/typeorm/index.js";
+import { FindManyOptions, FindOneOptions } from "typeorm";
+import { IEventFunctions } from "./types/event-functions.interface.js";
+import { ICalendarFunctions } from "./types/calendar-functions.interface.js";
+import { TypeormEventFunctions } from "./database/typeorm/functions/typeorm-event.functions.js";
+import { TypeormCalendarFunctions } from "./database/typeorm/functions/typeorm-calendar.functions.js";
+import { CalendarOptions } from "./types/options.js";
+import { constructTypeOrmEntities, TypeOrmEntities } from "./database/typeorm/constructTypeOrmEntities.js";
 
-
-export * from "./database/typeorm/index.js"
-type EntityOptions = {
-    calendar: typeof AbstractCalendar;
-    event: typeof AbstractEvent;
-    participant: typeof AbstractParticipant;
-    participantHasEvent: typeof AbstractParticipantsHasEvent;
-};
-
-export type CalendarOptions = {
-    entities?: Partial<EntityOptions>;
-};
-
-export class Calendar {
-    private options?: CalendarOptions;
-    public declare entities: EntityOptions;
+export class Calendar implements ICalendarFunctions<any>, IEventFunctions<any> {
     private static _instance: Calendar;
+    declare private options: CalendarOptions;
+
+    declare public typeOrmEntities: TypeOrmEntities;
+
+    private constructor() {}
+
+    public get entities() {
+        if (this.options.orm === "typeorm") {
+            return this.typeOrmEntities;
+        }
+
+        throw new Error("Method not implemented.");
+    }
 
     public static get(): Calendar {
         if (!Calendar._instance) {
@@ -29,62 +31,47 @@ export class Calendar {
         return Calendar._instance;
     }
 
-    private constructor() {
+    public init(options: CalendarOptions) {
+        options.schema ??= "calendar";
 
-    }
-
-    public init(options?: CalendarOptions) {
         this.options = options;
-        this.entities = this.constructEntities()
+
+        if (this.options.orm === "typeorm") {
+            this.typeOrmEntities = constructTypeOrmEntities(this.options);
+        } else {
+            throw new Error("Orm not implemented.");
+        }
     }
 
-    private constructEntities() {
-        const eCalendar = this.options?.entities?.calendar ?? AbstractCalendar;
-        const eEvent = this.options?.entities?.event  ?? AbstractEvent;
-        const eParticipant = this.options?.entities?.participant ?? AbstractParticipant;
-        const eParticipantHasEvent = this.options?.entities?.participantHasEvent ?? AbstractParticipantsHasEvent;
-
-        @Entity({ schema: "calendar", name: "calendar" })
-        class Calendar extends eCalendar {
-            @OneToMany(() => Event, event => event.calendar)
-            events!: Relation<Event[]>;
+    getEvents<TE extends AbstractEvent>(opts?: FindManyOptions<TE>): Promise<TE[]> {
+        if (this.options.orm === "typeorm") {
+            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getEvents(opts);
         }
 
-        @Entity({ schema: "calendar", name: "event" })
-        class Event extends eEvent {
-            @ManyToOne(() => Calendar, cal => cal.events, { onDelete: "CASCADE" })
-            @JoinColumn()
-            calendar!: Relation<Calendar>;
+        throw new Error("Method not implemented.");
+    }
 
-            @OneToMany(() => ParticipantHasEvent, p => p.event)
-            participants!: Relation<ParticipantHasEvent[]>;
+    getEvent<TE extends AbstractEvent>(opts: FindOneOptions<TE>): Promise<TE | null> {
+        if (this.options.orm === "typeorm") {
+            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getEvent(opts);
         }
 
-        @Entity({ schema: "calendar", name: "participant" })
-        class Participant extends eParticipant {
-            @OneToMany(() => ParticipantHasEvent, p => p.participant)
-            events!: Relation<ParticipantHasEvent[]>;
+        throw new Error("Method not implemented.");
+    }
+
+    getCalendars<TC extends AbstractCalendar>(opts?: FindManyOptions<TC>): Promise<TC[]> {
+        if (this.options.orm === "typeorm") {
+            return new TypeormCalendarFunctions<TC>(this.options.datasource(), this.typeOrmEntities.calendar).getCalendars(opts);
         }
 
-        @Entity({ schema: "calendar", name: "participant-has-event" })
-        class ParticipantHasEvent extends eParticipantHasEvent {
-            @ManyToOne(() => Event, event => event.participants, {
-                onDelete: "CASCADE",
-            })
-            @JoinColumn()
-            event!: Relation<Event>;
+        throw new Error("Method not implemented.");
+    }
 
-            @ManyToOne(() => Participant, p => p.events, { onDelete: "CASCADE" })
-            @JoinColumn()
-            participant!: Relation<Participant>;
+    getCalendar<TC extends AbstractCalendar>(opts: FindOneOptions<TC>): Promise<TC | null> {
+        if (this.options.orm === "typeorm") {
+            return new TypeormCalendarFunctions<TC>(this.options.datasource(), this.typeOrmEntities.calendar).getCalendar(opts);
         }
 
-        return {
-            calendar: Calendar,
-            event: Event,
-            participant: Participant,
-            participantHasEvent: ParticipantHasEvent,
-        }
-
+        throw new Error("Method not implemented.");
     }
 }

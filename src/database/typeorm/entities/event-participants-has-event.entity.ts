@@ -1,4 +1,4 @@
-import {Entity, JoinColumn, ManyToOne, PrimaryColumn, Relation} from "typeorm";
+import { PrimaryColumn } from "typeorm";
 
 export class AbstractParticipantsHasEvent {
     @PrimaryColumn()

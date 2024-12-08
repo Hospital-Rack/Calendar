@@ -1,6 +1,6 @@
-import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation} from "typeorm";
-import {TRRule} from "../../../types/rrule.type.js";
-import {TNotification} from "../../../types/TNotification.type.js";
+import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { TRRule } from "../../../types/rrule.type.js";
+import { TNotification } from "../../../types/TNotification.type.js";
 
 export class AbstractEvent {
     @PrimaryGeneratedColumn("uuid")
@@ -9,7 +9,7 @@ export class AbstractEvent {
     @Column()
     calendarId!: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     name?: string;
 
     @Column({
@@ -18,10 +18,10 @@ export class AbstractEvent {
     })
     description?: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     location?: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     duration?: number;
 
     @Column({
@@ -37,5 +37,4 @@ export class AbstractEvent {
         default: [],
     })
     notifications!: Partial<TNotification[]>;
-
 }

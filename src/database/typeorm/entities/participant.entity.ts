@@ -1,16 +1,14 @@
-import {Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation} from "typeorm";
+import { Column, PrimaryGeneratedColumn } from "typeorm";
 
 export class AbstractParticipant {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     email?: string;
 
     @Column({
         default: false,
     })
     isOrganizer?: boolean;
-
 }
-

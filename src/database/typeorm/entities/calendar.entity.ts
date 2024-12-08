@@ -1,5 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-
+import { Column, PrimaryGeneratedColumn } from "typeorm";
 
 export class AbstractCalendar {
     @PrimaryGeneratedColumn("uuid")
@@ -8,7 +7,6 @@ export class AbstractCalendar {
     @Column()
     name!: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     color?: string;
-
 }
