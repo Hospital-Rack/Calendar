@@ -1,35 +1,16 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from "typeorm";
-import { getParticipantHasEventEntity } from "./event-participants-has-event.entity.js";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation} from "typeorm";
 
-export type ParticipantEntityOptions = {
-    name?: string;
-    schema?: string;
+export class AbstractParticipant {
+    @PrimaryGeneratedColumn("uuid")
+    id!: string;
 
-    // tParticipantHasEvent: () => ReturnType<typeof getParticipantHasEventEntity>;
-};
+    @Column({nullable: true})
+    email?: string;
 
-export function getParticipantEntity(options: ParticipantEntityOptions) {
-    options.name ??= "participant";
-    options.schema ??= "calendar";
+    @Column({
+        default: false,
+    })
+    isOrganizer?: boolean;
 
-    // const tParticipantHasEvent = options.tParticipantHasEvent();
-
-    // @Entity({ schema: options.schema, name: options.name })
-    class Participant {
-        @PrimaryGeneratedColumn("uuid")
-        id!: string;
-
-        @Column({ nullable: true })
-        email?: string;
-
-        @Column({
-            default: false,
-        })
-        isOrganizer?: boolean;
-
-        // @OneToMany(() => tParticipantHasEvent, p => p.participant)
-        // events!: Relation<InstanceType<typeof tParticipantHasEvent>[]>;
-    }
-
-    return Participant;
 }
+

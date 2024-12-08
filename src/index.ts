@@ -1,34 +1,38 @@
 import "reflect-metadata";
-import { getCalendarEntity, getEventEntity, getParticipantEntity, getParticipantHasEventEntity } from "./database/typeorm/index.js";
+import {
+    AbstractCalendar, AbstractEvent, AbstractParticipant, AbstractParticipantsHasEvent,
+} from "./database/typeorm/index.js";
 import { Entity, JoinColumn, ManyToOne, OneToMany, Relation } from "typeorm";
 
+
+export * from "./database/typeorm/index.js"
 type EntityOptions = {
-    calendar?: ReturnType<typeof getCalendarEntity>;
-    event?: ReturnType<typeof getEventEntity>;
-    participant?: ReturnType<typeof getParticipantEntity>;
-    participantHasEvent?: ReturnType<typeof getParticipantHasEventEntity>;
+    calendar: typeof AbstractCalendar;
+    event: typeof AbstractEvent;
+    participant: typeof AbstractParticipant;
+    participantHasEvent: typeof AbstractParticipantsHasEvent;
 };
 
 export type CalendarOptions = {
-    entities?: EntityOptions;
+    entities?: Partial<EntityOptions>;
 };
 
 export class Calendar {
     private options?: CalendarOptions;
+    public declare entities: EntityOptions;
 
-    public get entities() {
-        return this.constructEntities();
-    }
+
 
     public init(options?: CalendarOptions) {
         this.options = options;
+        this.entities = this.constructEntities()
     }
 
     private constructEntities() {
-        const eCalendar = this.options?.entities?.calendar ? this.options.entities.calendar : getCalendarEntity({});
-        const eEvent = this.options?.entities?.event ? this.options.entities.event : getEventEntity({});
-        const eParticipant = this.options?.entities?.participant ? this.options.entities.participant : getParticipantEntity({});
-        const eParticipantHasEvent = this.options?.entities?.participantHasEvent ? this.options.entities.participantHasEvent : getParticipantHasEventEntity({});
+        const eCalendar = this.options?.entities?.calendar ?? AbstractCalendar;
+        const eEvent = this.options?.entities?.event  ?? AbstractEvent;
+        const eParticipant = this.options?.entities?.participant ?? AbstractParticipant;
+        const eParticipantHasEvent = this.options?.entities?.participantHasEvent ?? AbstractParticipantsHasEvent;
 
         @Entity({ schema: "calendar", name: "calendar" })
         class Calendar extends eCalendar {
@@ -69,7 +73,8 @@ export class Calendar {
             calendar: Calendar,
             event: Event,
             participant: Participant,
-            eventParticipantHasEvent: ParticipantHasEvent,
-        };
+            participantHasEvent: ParticipantHasEvent,
+        }
+
     }
 }
