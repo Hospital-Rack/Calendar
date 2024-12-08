@@ -1,29 +1,43 @@
 import "reflect-metadata";
 import { Calendar } from "calendar";
-import { Column, DataSource, Entity } from "typeorm";
+import {Column, DataSource, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation} from "typeorm";
+import {AbstractCalendar} from "calendar";
 
 const calendar = new Calendar();
 
-// console.log(calendar.entities.calendar)
-//
-// @Entity({schema: 'calendar'})
-// class MyCalendar extends calendar.entities.calendar {
-//     @Column({type: 'text'})
-//     userId?: string;
-// }
-//
-// calendar.init({ entities: { calendar: MyCalendar } });
+console.log(calendar.entities);
+class MyCalendar extends AbstractCalendar {
+    @Column({ type: "text" })
+    userId?: string;
+}
 
-console.log(calendar.entities.event);
+calendar.init({ entities: { calendar: MyCalendar } });
+
+
+@Entity({ schema: "calendar" })
+class Papia {
+    @PrimaryGeneratedColumn("uuid")
+    id!: string;
+
+    @Column()
+    eventId!: string;
+
+    @OneToOne(() => calendar.entities.event,e => e, { onDelete: "CASCADE" })
+    @JoinColumn()
+    event!: Relation<InstanceType<typeof calendar.entities.event>>;
+}
+
+let papia = new Papia()
 
 const AppDataSource = new DataSource({
     type: "postgres",
-    host: "10.0.50.2",
+    host: "hive.cyberglitch.me",
+    port: 25567,
     username: "admin",
-    password: "evergreen-smashing-mayday-footsore-unstaffed-computer",
-    database: "calendartest",
+    password: "s46?1g9pC",
+    database: "postgres",
     ssl: false,
-    entities: [...Object.values(calendar.entities)],
+    entities: [...Object.values(calendar.entities),Papia],
     synchronize: true,
     dropSchema: true,
     logging: true,
