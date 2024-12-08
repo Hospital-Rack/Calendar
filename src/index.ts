@@ -20,8 +20,18 @@ export type CalendarOptions = {
 export class Calendar {
     private options?: CalendarOptions;
     public declare entities: EntityOptions;
+    private static _instance: Calendar;
 
+    public static get(): Calendar {
+        if (!Calendar._instance) {
+            Calendar._instance = new Calendar();
+        }
+        return Calendar._instance;
+    }
 
+    private constructor() {
+
+    }
 
     public init(options?: CalendarOptions) {
         this.options = options;
