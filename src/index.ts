@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { getCalendarEntity, getEventEntity, getParticipantEntity, getParticipantHasEventEntity } from "./database/typeorm/index.js";
+import { Entity, JoinColumn, ManyToOne, OneToMany, Relation } from "typeorm";
 
 type EntityOptions = {
     calendar?: ReturnType<typeof getCalendarEntity>;
@@ -24,28 +25,51 @@ export class Calendar {
     }
 
     private constructEntities() {
-        let eCalendar: ReturnType<typeof getCalendarEntity>;
-        let eEvent: ReturnType<typeof getEventEntity>;
-        let eEventParticipant: ReturnType<typeof getParticipantEntity>;
-        let eParticipantHasEvent: ReturnType<typeof getParticipantHasEventEntity>;
+        const eCalendar = this.options?.entities?.calendar ? this.options.entities.calendar : getCalendarEntity({});
+        const eEvent = this.options?.entities?.event ? this.options.entities.event : getEventEntity({});
+        const eParticipant = this.options?.entities?.participant ? this.options.entities.participant : getParticipantEntity({});
+        const eParticipantHasEvent = this.options?.entities?.participantHasEvent ? this.options.entities.participantHasEvent : getParticipantHasEventEntity({});
 
-        if (this.options?.entities?.calendar) eCalendar = this.options.entities.calendar;
-        else eCalendar = getCalendarEntity({ tEvent: () => eEvent });
+        @Entity({ schema: "calendar", name: "calendar" })
+        class Calendar extends eCalendar {
+            @OneToMany(() => Event, event => event.calendar)
+            events!: Relation<Event[]>;
+        }
 
-        if (this.options?.entities?.event) eEvent = this.options.entities.event;
-        else eEvent = getEventEntity({ tCalendar: () => eCalendar, tParticipantHasEvent: () => eParticipantHasEvent });
+        @Entity({ schema: "calendar", name: "event" })
+        class Event extends eEvent {
+            @ManyToOne(() => Calendar, cal => cal.events, { onDelete: "CASCADE" })
+            @JoinColumn()
+            calendar!: Relation<Calendar>;
 
-        if (this.options?.entities?.participant) eEventParticipant = this.options.entities.participant;
-        else eEventParticipant = getParticipantEntity({ tParticipantHasEvent: () => eParticipantHasEvent });
+            @OneToMany(() => ParticipantHasEvent, p => p.event)
+            participants!: Relation<ParticipantHasEvent[]>;
+        }
 
-        if (this.options?.entities?.participantHasEvent) eParticipantHasEvent = this.options.entities.participantHasEvent;
-        else eParticipantHasEvent = getParticipantHasEventEntity({ tEvent: () => eEvent, tEventParticipant: () => eEventParticipant });
+        @Entity({ schema: "calendar", name: "participant" })
+        class Participant extends eParticipant {
+            @OneToMany(() => ParticipantHasEvent, p => p.participant)
+            events!: Relation<ParticipantHasEvent[]>;
+        }
+
+        @Entity({ schema: "calendar", name: "participant-has-event" })
+        class ParticipantHasEvent extends eParticipantHasEvent {
+            @ManyToOne(() => Event, event => event.participants, {
+                onDelete: "CASCADE",
+            })
+            @JoinColumn()
+            event!: Relation<Event>;
+
+            @ManyToOne(() => Participant, p => p.events, { onDelete: "CASCADE" })
+            @JoinColumn()
+            participant!: Relation<Participant>;
+        }
 
         return {
-            calendar: eCalendar,
-            event: eEvent,
-            eventHasParticipant: eEventParticipant,
-            eventParticipantHasEvent: eParticipantHasEvent,
+            calendar: Calendar,
+            event: Event,
+            participant: Participant,
+            eventParticipantHasEvent: ParticipantHasEvent,
         };
     }
 }
