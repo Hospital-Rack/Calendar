@@ -1,6 +1,6 @@
 import { IEventFunctions, NextAppointmentType } from "../../../types/event-functions.interface.js";
 import { AbstractEvent } from "../entities/event.entity.js";
-import { DataSource, EntityTarget, FindManyOptions, FindOneOptions, Raw } from "typeorm";
+import { DataSource, EntityTarget, FindManyOptions, FindOneOptions } from "typeorm";
 
 export class TypeormEventFunctions<TE extends AbstractEvent> implements IEventFunctions<TE> {
     constructor(
@@ -18,9 +18,7 @@ export class TypeormEventFunctions<TE extends AbstractEvent> implements IEventFu
 
     async getNextAppointmentSlot(opts: NextAppointmentType<TE>): Promise<string | null> {
         const now = new Date();
-        const events = await this.datasource.manager.createQueryBuilder<TE>(this.entityClass, "event")
-            .where(`(event.rrule->>'startDate')::timestamp >= :now`, { now })
-            .getMany();
+        const events = await this.datasource.manager.createQueryBuilder<TE>(this.entityClass, "event").where(`(event.rrule->>'startDate')::timestamp >= :now`, { now }).getMany();
 
         // Sort events by start date
         events.sort((a, b) => {
