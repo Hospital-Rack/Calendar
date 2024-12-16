@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { AbstractCalendar, AbstractEvent } from "./database/typeorm/index.js";
-import { FindManyOptions, FindOneOptions } from "typeorm";
-import { IEventFunctions } from "./types/event-functions.interface.js";
+import { FindManyOptions } from "typeorm";
+import { IEventFunctions, NextAppointmentType } from "./types/event-functions.interface.js";
 import { ICalendarFunctions } from "./types/calendar-functions.interface.js";
 import { TypeormEventFunctions } from "./database/typeorm/functions/typeorm-event.functions.js";
 import { TypeormCalendarFunctions } from "./database/typeorm/functions/typeorm-calendar.functions.js";
@@ -51,14 +51,6 @@ export class Calendar implements ICalendarFunctions<any>, IEventFunctions<any> {
         throw new Error("Method not implemented.");
     }
 
-    getEvent<TE extends AbstractEvent>(opts: FindOneOptions<TE>): Promise<TE | null> {
-        if (this.options.orm === "typeorm") {
-            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getEvent(opts);
-        }
-
-        throw new Error("Method not implemented.");
-    }
-
     getCalendars<TC extends AbstractCalendar>(opts?: FindManyOptions<TC>): Promise<TC[]> {
         if (this.options.orm === "typeorm") {
             return new TypeormCalendarFunctions<TC>(this.options.datasource(), this.typeOrmEntities.calendar).getCalendars(opts);
@@ -67,9 +59,9 @@ export class Calendar implements ICalendarFunctions<any>, IEventFunctions<any> {
         throw new Error("Method not implemented.");
     }
 
-    getCalendar<TC extends AbstractCalendar>(opts: FindOneOptions<TC>): Promise<TC | null> {
+    getNextAppointmentSlot<TE extends AbstractEvent>(opts: NextAppointmentType<TE>): Promise<string | null> {
         if (this.options.orm === "typeorm") {
-            return new TypeormCalendarFunctions<TC>(this.options.datasource(), this.typeOrmEntities.calendar).getCalendar(opts);
+            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getNextAppointmentSlot(opts);
         }
 
         throw new Error("Method not implemented.");

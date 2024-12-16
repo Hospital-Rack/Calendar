@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "start": "tsc -d && node dist/index.js",
+        "build:parent": "cd .. && yarn build && cd test && yarn add calendar@file:..",
         "test": "tsx index.ts"
     },
     "author": "",

@@ -26,14 +26,12 @@ export class AbstractEvent {
 
     @Column({
         type: "jsonb",
-        nullable: true,
         default: {},
     })
     rrule!: Partial<TRRule>;
 
     @Column({
         type: "jsonb",
-        nullable: true,
         default: [],
     })
     notifications!: Partial<TNotification[]>;
