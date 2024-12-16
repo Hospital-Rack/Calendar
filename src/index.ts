@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { AbstractCalendar, AbstractEvent } from "./database/typeorm/index.js";
-import { FindManyOptions } from "typeorm";
-import { IEventFunctions, NextAppointmentType } from "./types/event-functions.interface.js";
+import { FindManyOptions, QueryBuilder } from "typeorm";
+import { IEventFunctions } from "./types/event-functions.interface.js";
 import { ICalendarFunctions } from "./types/calendar-functions.interface.js";
 import { TypeormEventFunctions } from "./database/typeorm/functions/typeorm-event.functions.js";
 import { TypeormCalendarFunctions } from "./database/typeorm/functions/typeorm-calendar.functions.js";
@@ -43,14 +43,6 @@ export class Calendar implements ICalendarFunctions<any>, IEventFunctions<any> {
         }
     }
 
-    getEvents<TE extends AbstractEvent>(opts?: FindManyOptions<TE>): Promise<TE[]> {
-        if (this.options.orm === "typeorm") {
-            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getEvents(opts);
-        }
-
-        throw new Error("Method not implemented.");
-    }
-
     getCalendars<TC extends AbstractCalendar>(opts?: FindManyOptions<TC>): Promise<TC[]> {
         if (this.options.orm === "typeorm") {
             return new TypeormCalendarFunctions<TC>(this.options.datasource(), this.typeOrmEntities.calendar).getCalendars(opts);
@@ -59,9 +51,17 @@ export class Calendar implements ICalendarFunctions<any>, IEventFunctions<any> {
         throw new Error("Method not implemented.");
     }
 
-    getNextAppointmentSlot<TE extends AbstractEvent>(opts: NextAppointmentType<TE>): Promise<string | null> {
+    getEvents<TE extends AbstractEvent>(startDate: Date, endDate: Date, opts: FindManyOptions<TE>): Promise<TE[]> {
         if (this.options.orm === "typeorm") {
-            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getNextAppointmentSlot(opts);
+            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getEvents(startDate, endDate, opts);
+        }
+
+        throw new Error("Method not implemented.");
+    }
+
+    getNextAppointmentSlot<TE extends AbstractEvent>(duration: number, builder?: (qb: QueryBuilder<TE>) => void): Promise<string | null> {
+        if (this.options.orm === "typeorm") {
+            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getNextAppointmentSlot(duration, builder);
         }
 
         throw new Error("Method not implemented.");

@@ -78,9 +78,6 @@ appDataSource = new DataSource({
     console.log("Mock events have been saved!");
 
     // Call the function to get the next available appointment slot
-    const nextSlot = await Calendar.get().getNextAppointmentSlot({
-        duration: 30, // Looking for a 30-minute slot
-    });
+    const nextSlot = await Calendar.get().getNextAppointmentSlot(30); // Looking for a 30-minute slot
     console.log('Next available slot:', nextSlot);
-
 })();

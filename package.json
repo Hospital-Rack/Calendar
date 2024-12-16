@@ -37,6 +37,12 @@
     },
     "author": "",
     "license": "ISC",
+    "dependencies": {
+        "class-transformer": "^0.5.1",
+        "class-validator": "^0.14.1",
+        "rrule": "^2.8.1",
+        "pg": "^8.13.1"
+    },
     "devDependencies": {
         "@eslint/eslintrc": "^3.1.0",
         "@eslint/js": "^9.8.0",
@@ -56,10 +62,5 @@
     "optionalDependencies": {
         "drizzle-orm": "^0.37.0",
         "typeorm": "^0.3.20"
-    },
-    "peerDependencies": {
-        "class-transformer": "^0.5.1",
-        "class-validator": "^0.14.1",
-        "pg": "^8.13.1"
     }
 }
