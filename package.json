@@ -1,7 +1,7 @@
 {
-    "name": "callendar",
-    "version": "1.0.0",
-    "description": "",
+    "name": "@cruify/calendar",
+    "version": "0.0.1",
+    "description": "An abstract calendar library, supports typeorm and drizzle",
     "main": "dist/index.js",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -35,8 +35,8 @@
         "drizzle:studio": "drizzle-kit studio --config=src/Toolbox/Providers/Drizzle/drizzle.config.ts",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
     },
-    "author": "",
-    "license": "ISC",
+    "author": "Curify",
+    "license": "MIT",
     "dependencies": {
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.1",
