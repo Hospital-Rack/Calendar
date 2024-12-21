@@ -1,5 +1,5 @@
 {
-    "name": "@cruify/calendar",
+    "name": "@curifyapp/calendar",
     "version": "0.0.1",
     "description": "An abstract calendar library, supports typeorm and drizzle",
     "main": "dist/index.js",
