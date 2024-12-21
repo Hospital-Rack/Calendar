@@ -35,13 +35,11 @@ export class CreateEvent {
     public rrule!: RRule;
 
     @IsOptional()
-    @IsArray({ each: true })
     @ValidateNested({ each: true })
     @Type(() => Notification)
     public notifications?: Notification[];
 
     @IsOptional()
-    @IsArray({ each: true })
     @ValidateNested({ each: true })
     @Type(() => Participant)
     public participants?: Participant[];

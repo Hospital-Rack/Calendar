@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsObject, IsOptional, IsString, IsUUID, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+import { IsNumber, IsObject, IsOptional, IsString, IsUUID, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
 import { RRule } from "./rrule.dto.js";
 import { Type } from "class-transformer";
 import { Notification } from "./notification.dto.js";
@@ -38,13 +38,11 @@ export class UpdateEvent {
     public rrule?: RRule;
 
     @IsOptional()
-    @IsArray({ each: true })
     @ValidateNested({ each: true })
     @Type(() => Notification)
     public notifications?: Notification[];
 
     @IsOptional()
-    @IsArray({ each: true })
     @ValidateNested({ each: true })
     @Type(() => Participant)
     public participants?: Participant[];

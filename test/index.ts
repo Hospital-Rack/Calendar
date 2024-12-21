@@ -2,6 +2,21 @@ import "reflect-metadata";
 import { Calendar } from "calendar";
 import { Column, DataSource } from "typeorm";
 import { AbstractCalendar } from "calendar/database/typeorm";
+import { UpdateEvent } from "calendar/dto";
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
+
+
+const input = {
+    notifications: [
+        { type: "EMAIL", duration: 5, beforeType: "MINUTE" },
+        { type: "NOTIFICATION", duration: 10, beforeType: "HOUR" }
+    ]
+};
+
+const instance = plainToClass(UpdateEvent, input);
+console.log(instance);
+
 
 let appDataSource: DataSource;
 
