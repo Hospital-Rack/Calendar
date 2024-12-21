@@ -1,7 +1,7 @@
 import { IEventFunctions } from "../../../types/event-functions.interface.js";
 import { AbstractEvent } from "../entities/event.entity.js";
 import { DataSource, EntityTarget, FindManyOptions, QueryBuilder } from "typeorm";
-import { rrulestr } from "rrule";
+import rrule from "rrule";
 
 export class TypeormEventFunctions<TE extends AbstractEvent> implements IEventFunctions<TE> {
     constructor(
@@ -15,7 +15,7 @@ export class TypeormEventFunctions<TE extends AbstractEvent> implements IEventFu
 
         const result: { event: TE; nextOccurrence: Date }[] = [];
         allEvents.forEach(event => {
-            const rule = rrulestr(JSON.stringify(event.rrule));
+            const rule = rrule.rrulestr(JSON.stringify(event.rrule));
             const occurrences = rule.between(startDate, endDate, true);
 
             if (occurrences.length > 0) {
