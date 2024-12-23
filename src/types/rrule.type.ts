@@ -1,11 +1,11 @@
 export type TRRule = {
-    freq: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+    freq: "SECONDLY" | "MINUTELY" | "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
     interval: number;
     until: Date;
     count: number;
     byMinute: number;
     byHour: number;
-    byDay: string;
+    byDay: "MO" | "TU" | "WE" | "TH" | "FR" | "SA" | "SU";
     byMonthDay: number;
     byYearDay: number;
     byWeekNo: number;

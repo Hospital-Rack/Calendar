@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { AbstractCalendar, AbstractEvent } from "./database/typeorm/index.js";
 import { FindManyOptions, QueryBuilder } from "typeorm";
-import { IEventFunctions } from "./types/event-functions.interface.js";
+import { IEventFunctions, OccurrenceResult } from "./types/event-functions.interface.js";
 import { ICalendarFunctions } from "./types/calendar-functions.interface.js";
 import { TypeormEventFunctions } from "./database/typeorm/functions/typeorm-event.functions.js";
 import { TypeormCalendarFunctions } from "./database/typeorm/functions/typeorm-calendar.functions.js";
@@ -51,9 +51,9 @@ export class Calendar implements ICalendarFunctions<any>, IEventFunctions<any> {
         throw new Error("Method not implemented.");
     }
 
-    getEvents<TE extends AbstractEvent>(startDate: Date, endDate: Date, opts: FindManyOptions<TE>): Promise<TE[]> {
+    getEventOccurrences<TE extends AbstractEvent>(startDate: Date, endDate: Date, opts?: FindManyOptions<TE>): Promise<OccurrenceResult<TE>[]> {
         if (this.options.orm === "typeorm") {
-            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getEvents(startDate, endDate, opts);
+            return new TypeormEventFunctions<TE>(this.options.datasource(), this.typeOrmEntities.event).getEventOccurrences(startDate, endDate, opts);
         }
 
         throw new Error("Method not implemented.");

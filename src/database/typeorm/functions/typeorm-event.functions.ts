@@ -1,7 +1,8 @@
-import { IEventFunctions } from "../../../types/event-functions.interface.js";
+import { IEventFunctions, OccurrenceResult } from "../../../types/event-functions.interface.js";
 import { AbstractEvent } from "../entities/event.entity.js";
 import { DataSource, EntityTarget, FindManyOptions, QueryBuilder } from "typeorm";
 import rrule from "rrule";
+import { toRRuleInput } from "../../../utils/toRRuleInput.js";
 
 export class TypeormEventFunctions<TE extends AbstractEvent> implements IEventFunctions<TE> {
     constructor(
@@ -9,25 +10,23 @@ export class TypeormEventFunctions<TE extends AbstractEvent> implements IEventFu
         private readonly entityClass: EntityTarget<TE>,
     ) {}
 
-    async getEvents(startDate: Date, endDate: Date, opts: FindManyOptions<TE>): Promise<TE[]> {
+    async getEventOccurrences(startDate: Date, endDate: Date, opts?: FindManyOptions<TE>): Promise<OccurrenceResult<TE>[]> {
         // Fetch all events from the database
         const allEvents = await this.datasource.manager.find(this.entityClass, opts);
 
-        const result: { event: TE; nextOccurrence: Date }[] = [];
+        const result: OccurrenceResult<TE>[] = [];
         allEvents.forEach(event => {
-            const rule = rrule.rrulestr(JSON.stringify(event.rrule));
+            const rule = new rrule.RRule(toRRuleInput(event.rrule));
             const occurrences = rule.between(startDate, endDate, true);
-
-            if (occurrences.length > 0) {
-                const nextOccurrence = occurrences[0];
+            occurrences.forEach(nextOccurrence => {
                 result.push({ event, nextOccurrence });
-            }
+            });
         });
 
         // Sort events by the next occurrence date
         result.sort((a, b) => a.nextOccurrence.getTime() - b.nextOccurrence.getTime());
 
-        return result.map(item => item.event);
+        return result;
     }
 
     async getNextAppointmentSlot(duration: number, builder?: (qb: QueryBuilder<TE>) => void): Promise<string | null> {

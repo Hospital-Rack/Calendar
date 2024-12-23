@@ -4,8 +4,8 @@ import { isISO8601WithZeroOffset } from "../../utils/isISO8601WithZeroOffset.js"
 export class RRule {
     @IsOptional()
     @IsString()
-    @IsIn(["DAILY", "WEEKLY", "MONTHLY", "YEARLY"])
-    public freq?: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+    @IsIn(["SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"])
+    public freq?: "SECONDLY" | "MINUTELY" | "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
 
     @IsOptional()
     @IsNumber()
