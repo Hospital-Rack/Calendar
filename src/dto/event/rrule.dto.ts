@@ -5,7 +5,7 @@ export class RRule {
     @IsOptional()
     @IsString()
     @IsIn(["DAILY", "WEEKLY", "MONTHLY", "YEARLY"])
-    public type?: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+    public freq?: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
 
     @IsOptional()
     @IsNumber()
